@@ -1,0 +1,123 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <script type="text/javascript" src="./static/jquery-1.11.3/jquery.min.js" charset="UTF-8"></script>
+    <!--<script type="text/javascript" src="./static/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="./static/bootstrap-datetimepicker.min.css" charset="UTF-8"></script>
+    <script src="static/bootstrap-select.min.js"></script>
+    <script src="static/bootstrap-select.min.css"></script>-->
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
+
+    <style text='text/css'>
+        div{
+            font-size:16px;
+            line-height:30px;
+        }
+        .main-frame{
+            text-align:center;
+        }
+
+        .detail-bar {
+            margin: 0 auto;
+            margin-top: 30px;
+            padding-top: 20px;
+            border: 1px solid #cccccc;
+            background-color: #faf9f9;
+            width: 400px;
+            text-align: left;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 30px;
+        }
+        .submit-block{
+            text-align:right;
+            margin-top:30px;
+            margin-right:30px;
+        }
+        .egg-block:hover{
+            opacity: 0;
+        }
+        .egg-block{
+              opacity: 1;
+              transition: opacity 5s linear;
+        }
+        .status-title{
+            color:white;
+        }
+        #overlap{
+            z-index: 99;
+            position: absolute;
+            background-color:black;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            display: none;
+            opacity: 0.3;
+            transition:opacity 3s ease,left 3s ease-in-out;
+        }
+
+    </style>
+
+    <script type='text/javascript'>
+    $(function(){
+        $('#submit_query').click(function(){
+             $.ajax({
+               'url':'./commit',
+               'type':'get',
+               'data':{'tid':{{tid}},'jobid':{{jobid}}, 'submit_type':$('#submit_type').val()},
+               'dataType':'json',
+               'success':function(data){
+                   if($('#submit_type').val() == '0') {
+                       alert('任务开始，跳转至上课页面')
+                       $(location).prop('href', "./classroom?tid={{tid}}&jobid={{jobid}}&count={{detail['count']}}")
+                   }
+                   else if ($('#submit_type').val() == '1') {
+                       alert('任务结束，跳转至主页面')
+                       $(location).prop('href', "./main?tid={{tid}}&status=jd&jobid={{jobid}}&rewards={{detail['rewards']}}")
+                   }
+                }
+            })
+        })
+    })
+    </script>
+  </head>
+  <body>
+  <div class='main-frame' id='mainframe'>
+  <h3>任务详情页</h3>
+  <div class='detail-bar'>
+      <li>任务号: {{jobid}}</li>
+      <li>任务主题: {{detail['topic']}}</li>
+      <li><font color='red'>任务简介: {{detail['tip'][tea_x_task['current_step']|int - 1]}}</font></li>
+      <li>任务类型: {{detail['jobtype']}}</li>
+      <li>任务步骤: {{tea_x_task['current_step']}}/{{detail['total_step']}}</li>
+      <li><font color='red'>任务奖励: {{detail['rewards']}}</font></li>
+      <li><font color='read'>任务状态: {%if tea_x_task['status'] == '0'%}未开始{%elif tea_x_task['status'] == '1'%}已开始,未提交{%else%}已完成{%endif%}</font></li>
+      <li>起始时间: {{tea_x_task['start_time']}}</li>
+      <li>结束时间: {{tea_x_task['finish_time']}}</li>
+      {% if tea_x_task['status'] == '0' %}
+      <input type="hidden" name="submit_type" id="submit_type" value="0"/>
+      <div class='submit-block'>
+      <input type="button" name="submit_query" id="submit_query" value="确认启动任务" class="btn btn-primary"/>
+      </div>
+      {% elif tea_x_task['status'] == '1' %}
+      <input type="hidden" name="submit_type" id="submit_type" value="1"/>
+      <div class='submit-block'>
+      <input type="button" name="submit_query" id="submit_query" value="确认提交" class="btn btn-primary"/>
+      </div>
+      {%endif%}
+  </div>
+  </div>
+  <div id="overlap">
+    <div style='text-align:center;margin-top:100px;'>
+    <img src='./static/images/caidan.png' width='20%' height='40%'>
+      {% if tea_x_task['status'] == '0' %}
+          <h1 class='status-title'>任务开始啦~~~~~~~~~~~~~~~~~~</h3>
+      {%elif tea_x_task['status'] == '1' %}
+          <h1 class='status-title'>任务结束啦~~~~~~~~~~~~~~~~~~</h3>
+      {%endif%}
+    </div>
+  </div>
+  </body>
+</html>

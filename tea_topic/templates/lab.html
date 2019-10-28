@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <script type="text/javascript" src="./static/jquery-1.11.3/jquery.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="./static/jquery.timers.min.js" charset="UTF-8"></script>
+    <style type='text/css'>
+    #top-div{
+        text-align:center;
+        margin-top:30px; 
+    }
+    #text-div{
+        margin-top:30px;
+        width:80%;
+    }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
+    <script type='text/javascript'>
+    $(function(){
+       ws = new WebSocket("ws://10.24.61.177:5678/")
+       ws.onmessage = function(data){
+           resp_obj = JSON.parse(data.data)
+           console.log(resp_obj)
+           if (resp_obj['msgid'] == '200'){
+               console.log(resp_obj)
+               $('#tt1').text('发现老师= 46168711 [情绪]不合格\n发现老师= 33180877 [情绪]不合格\n发现老师= 123 [情绪]不合格\n发现老师= 664454133 [情绪]不合格\n发现老师= 971453457 [情绪]不合格\n发现老师= 98147322 [情绪]不合格') 
+           }
+       }
+       $('body').oneTime('2s', function(){
+            console.log('建立连接')
+            ws.send(JSON.stringify({'type':'200','uid':'113','roomid':'101'}))
+        })
+
+
+       $('#submit_query').click(function(){
+           ws.send(JSON.stringify({'type':'119','uid':'113','id':'2221','roomid':'101','msg':'zzzz'}))   
+       }) 
+     })
+    </script>
+  </head>
+  <body>
+  <center>
+  <div id='top-div'>
+      <input type="button" name="submit_query" id="submit_query" value="执行老师情绪计分" class="btn btn-primary"/>
+  </div>
+  <div id='text-div'>
+  <textarea id='tt1' cols='150' rows='25'></textarea>
+  </div>
+  </center>
+  </body>
+</html>

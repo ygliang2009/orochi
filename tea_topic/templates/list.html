@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <script type="text/javascript" src="./static/jquery-1.11.3/jquery.min.js" charset="UTF-8"></script>
+    <!--<script type="text/javascript" src="./static/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="./static/bootstrap-datetimepicker.min.css" charset="UTF-8"></script>
+    <script src="static/bootstrap-select.min.js"></script>
+    <script src="static/bootstrap-select.min.css"></script>-->
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
+    <style type='text/css'>
+    table{
+        margin-top:50px;
+    }
+    tr {
+        margin-top:10px;
+        margin-bottom:10px;
+    }
+    .middle-block{
+        margin-top:20px;
+        margin-bottom:40px;
+        text-align:center;
+    }
+    .tasknode-block{
+        margin-top:5px;
+        margin-bottom:5px;
+    }
+    #bottom-div{
+       text-align:center;
+    }
+    </style>
+    <script type='text/javascript'>
+    $(function(){
+    })
+    </script>
+  </head>
+  <body>
+  <div class='middle-block'>
+  <h3>任务列表页</h3>
+  <table width='80%' align='center' class='table table-striped'>
+  <tr>
+  <td width='5%'>任务号</td>
+  <td width='10%'>任务类型</td>
+  <td width='15%'>任务主题</td>
+  <td width='30%'>任务介绍</td>
+  <td width='10%'>任务状态</td>
+  <td width='10%'>起始时间</td>
+  <td width='10%'>结束时间</td>
+  <td width='5%'>步长</td>
+  <td width='5%'>奖励</td>
+  </tr> 
+  {% for jobid,d in tea_x_task.items() %}
+  <tr>
+    <td>{{jobid}}</td>
+    <td>{{tasklist_data[jobid]['jobtype']}}</td>
+    <td>{{tasklist_data[jobid]['topic']}}</td>
+    <td>{{tasklist_data[jobid]['tip']}}</td>
+    <td>{%if d['status'] == '0'%}未开始{%elif d['status'] == '1'%}已开始,未提交{%else%}已完成{%endif%}</td>
+    <td>{{d['start_time']}}</td>
+    <td>{{d['finish_time']}}</td>
+    <td>{{tasklist_data[jobid]['total_step']}}</td>
+    <td>{{tasklist_data[jobid]['rewards']}}</td>
+  </tr>
+  {% endfor %}
+  </table>
+  </div>
+  <div id='bottom-div'><a href="./main?tid={{tid}}">返回到首页</div>
+  </body>
+</html>

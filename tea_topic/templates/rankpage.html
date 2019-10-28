@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <script type="text/javascript" src="./static/jquery-1.11.3/jquery.min.js" charset="UTF-8"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
+    <style type='text/css'>
+    table{
+        margin-top:50px;
+    }
+    tr {
+        margin-top:10px;
+        margin-bottom:10px;
+    }
+    .middle-block{
+        margin-top:20px;
+        margin-bottom:40px;
+        text-align:center;
+    }
+    .tasknode-block{
+        margin-top:5px;
+        margin-bottom:5px;
+    }
+    #bottom-div{
+       text-align:center;
+    }
+    </style>
+    <script type='text/javascript'>
+    $(function(){
+    })
+    </script>
+  </head>
+  <body>
+  <div class='middle-block'>
+  <h3>教师教学排名</h3>
+  <table width='80%' align='center' class='table table-striped'>
+  <tr>
+  <td width='10%'>排名</td>
+  <td width='15%'>老师姓名</td>
+  <td width='15%'>总得分</td>
+  <td width='15%'>情绪激励培养</td>
+  <td width='15%'>开口时长培养</td>
+  <td width='15%'>专注度培养</td>
+  <td width='15%'>反映时间培养</td>
+  </tr>
+  {% for info in ranklist %}
+  <tr>
+    <td>{{loop.index}}</td>
+    <td>{{info['name']}}</td>
+    <td>{{info['score']}}</td>
+    <td>{{info['101']}}</td>
+    <td>{{info['102']}}</td>
+    <td>{{info['103']}}</td>
+    <td>{{info['104']}}</td>
+  </tr>
+  {% endfor %}
+</table>
+  </div>
+  <div id='bottom-div'><a href="./main?tid={{tid}}">返回到首页</div>
+  </body>
+</html>

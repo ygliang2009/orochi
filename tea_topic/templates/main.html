@@ -1,0 +1,212 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <script type="text/javascript" src="./static/jquery-1.11.3/jquery.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="./static/jquery.timers.min.js" charset="UTF-8"></script>
+    <!--<script type="text/javascript" src="./static/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="./static/bootstrap-datetimepicker.min.css" charset="UTF-8"></script>
+    <script src="static/bootstrap-select.min.js"></script>
+    <script src="static/bootstrap-select.min.css"></script>-->
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
+    <style text='text/css'>
+        div{
+            font-size:16px;
+            line-height:30px;
+        }
+        .main-frame{
+            text-align:center;
+        }
+        .tea-bar{
+            margin-top:40px;
+        }
+        #todo-list{
+            margin:0 auto;
+            margin-top:40px;
+            border:1px solid #cccccc;
+            width:550px;
+            text-align:left;
+            padding-left:30px;
+            padding-right:20px;
+            background-color:#faf9f9;
+        }
+        .todo-title{
+            margin-top:15px;
+            margin-bottom:20px;
+        }
+        .box {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            text-align:center;
+            background: rgba(51,51,51,0.5);
+            z-index: 3;//根据自己页面情况设置
+        }
+        .container {
+            width: 500px;
+            height: 400px;
+            position: absolute;
+            left: calc(50% - 250px);
+            top: calc(50% - 200px);
+            background: #fee6e6;
+            z-index: 5;//根据自己页面情况设置
+        }
+        #getjob_block {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            text-align:center;
+            background: rgba(51,51,51,0.5);
+            z-index: 3;//根据自己页面情况设置
+        }
+        .job_container {
+            width: 600px;
+            height: 400px;
+            text-align:left;
+            padding-left:10px;
+            padding-right:10px;
+            overflow:scroll;
+            position: absolute;
+            left: calc(50% - 300px);
+            top: calc(50% - 200px);
+            background: #f4efef;
+            z-index: 5;//根据自己页面情况设置
+        }
+       .joblist-body{
+            overflow:scroll;
+            padding-top:20px;
+            padding-bottom:10px;
+            height:320px;
+            border:1px fixed;
+            background-color:#fff;
+       }
+       .cong-img{
+           margin-top:50px;
+           margin-bottom:50px;
+       }
+       .joblist {
+           margin-top:20px;
+       }
+       .gettask {
+           margin-top:20px;
+           margin-bottom:20px;
+           text-align:right;
+           padding-right:30px;    
+       }
+       .passive-cls {
+          font-size:14px;
+          color:#b0adad;
+       }
+       .passive-cls-2 {
+           color:red;
+       }
+    </style>
+    <script type='text/javascript'>
+    $(function(){
+         ws = new WebSocket("ws://10.24.61.177:5678/")
+         ws.onmessage = function(data){
+             resp_obj = JSON.parse(data.data)
+             console.log(resp_obj)
+             if (resp_obj['msgid'] == 100) {
+                alert('您有新的被动任务')
+                $('#passive').attr('class', 'passive-cls-2')
+                $('#passive').text('click me !!!') 
+             }
+         }
+        $('#todo-title').click(function(){
+            if($('#passive').text() == 'click me !!!') {
+                $('#passive').attr('class', 'passive-cls')
+                $('#passive').text('0') 
+                $('#tasklist-bar').append("<li><a href='./submit?jobid=" + 5 + "&tid={{tid}}'>[被动任务]&nbsp;&nbsp;情绪大提升，激励1堂课学生5次高兴情绪表达</a></li>")
+                //alert('sssss') 
+            }
+        })
+        $('body').oneTime('2s', function(){
+            console.log('建立连接')
+            ws.send(JSON.stringify({'type':'200','uid':'112','roomid':'101'}))
+        })
+
+         $(".close").click(function(){
+             $(".box").hide();
+         })
+
+        {%if jdone == 1 %}
+             $(".box").show();
+        {%endif%}
+
+        $('#gettask-btn').click(function(){
+             $("#getjob_block").show();
+        })
+        $(".joblist-head").click(function(){
+            $("#getjob_block").hide();
+        })
+        $('.add_job_cls').click(function(idx){
+            elist = event.target.id.split('_')
+            new_job_id = elist[3]
+            $.ajax({
+               'url':'./addjob',
+               'type':'get',
+               'data':{'tid':{{tid}},'jobid':new_job_id},
+               'dataType':'json',
+               'success':function(data){
+                    alert('任务领取完成')
+                    $("#getjob_block").hide();
+                    if (data['add_status'] == 1) {
+                        $('#tasklist-bar').append("<li><a href='./submit?jobid=" + new_job_id + "&tid={{tid}}'>[主动任务]&nbsp;&nbsp;" + data['tips'] + "</a></li>")
+                    }
+                }
+            })
+        })
+    })
+    </script>
+  </head>
+  <body>
+  <div class='main-frame'>
+  <h3>教师主页</h3>
+  <div class='tea-bar' id='tea-bar'>
+  <img src="./static/images/{{tid}}.jpg">
+  </div>
+  <div id='todo-list'>
+  <h4 id='todo-title' class='todo-title'>领取任务列表&nbsp;<label id='passive' class='passive-cls'>0</label></h4>
+  <div id='tasklist-bar'>
+  {% for jobid,d in tea_x_task.items() %}
+    {%if d['status'] != '2' and jobid != '5' %}
+    <li><a href="./submit?jobid={{jobid}}&tid={{tid}}">[{%if d['mode'] == 'active'%}主动任务{%else%}被动任务{%endif%}]&nbsp;&nbsp;{{tasklist_data[jobid]['tip'][d['current_step']|int - 1]}}</a></li>
+    {%endif%}
+  {% endfor %}
+  </div>
+  <div class='gettask'>
+      <input type="button" name="gettask-btn" id="gettask-btn" value="领取任务" class="btn btn-primary"/>
+  </div>
+  </div>
+  <div id='joblist' class='joblist'><a href="./rankpage?tid={{tid}}">排行榜</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="./list?tid={{tid}}">任务记录</a></div>
+  </div>
+  <div id="overlap" class="box">
+    <div class="container">
+    {%if jdone == 1%}
+       <button class="close">x</button>
+       <div class='cong-head'><h3>任务达成!</h3></div>
+       <div class='cong-img'><img src='./static/images/caidan.png' width='40%' height='40%'></img></div>
+       <div class='cong-detail'>恭喜<font color='red'>{{tea_info['name']}}</font> 获得<font color='red'>{{rewards}}</font>个成长值. 当前成长值<font color='red'>{{score}}</font></div>
+       <div class='cong-tail'>您可以: 查看<a href='./list?tid={{tid}}'>任务记录</a>&nbsp;&nbsp;查看<a href='./rankpage?tid={{tid}}'>排行榜</a></div>
+    {%endif%}
+    </div>
+  </div>
+  <div id="getjob_block" class="getjob">
+    <div class="job_container">
+       <div class='joblist-head'><h4>任务列表</h4></div>
+       <div class='joblist-body'>
+       {%for idx,tinf in tasklist_data.items() %}
+       <ul><a>{{idx}}.&nbsp;{{tinf['tip'][0]}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="add_job_btn_{{idx}}" value="领取任务" class="btn btn-primary add_job_cls"/></ul>
+       {%endfor%}     
+       </div>
+    </div>
+  </div>
+  </body>
+</html>
