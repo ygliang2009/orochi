@@ -4,9 +4,6 @@
 import asyncio
 import websockets
 import json
-import WhiteList as wl
-import Room
-import User
 import os
 
 class SignalServer:
@@ -33,7 +30,7 @@ class SignalServer:
         self.startWork(self.__serveAddr, self.__servePort)
 
     def __joinFullPath(self):
-        return self.__serveProtocol + "://" + self.__serveAddr + "/"
+        return '%s://%s/'%(self.__serveProtocol, self.__serveAddr)
 
     def startWork(self, serveAddr, servePort):
         start_server = websockets.serve(self.procMessage, serveAddr, servePort)
@@ -58,7 +55,7 @@ class SignalServer:
             respObj["msgtype"] = "RESP"
             if msg_obj != False and "roomid" in msg_obj and "uid" in msg_obj:
                 msgType = int(msg_obj["type"])
-                self.__logger.debug("receive msg info = " + str(msg_obj) + " , websocket = " + str(websocket))
+                self.__logger.debug("receive msg info = %s, websocket = %s"%(str(msg_obj), str(websocket)))
                 
                 if msgType == 200:
                     #create chatroom
@@ -91,9 +88,7 @@ class SignalServer:
                         respObj["msgid"] = "10"
                         respObj["msg"] = "push room info ok"
                   
-                        self.__logger.debug("xxxxx")
                         for puid,sock in self.__roomBuffer[roomid].items():
-                            self.__logger.debug("pppp")
                             if puid != uid:
                                 self.__logger.debug("puid = %s"%(puid))
                                 pmsg = {}
